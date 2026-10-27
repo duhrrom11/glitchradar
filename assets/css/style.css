@@ -1,0 +1,59 @@
+:root {
+    --bg-color: #1A1D20;        /* Tiefes Mattschwarz / Anthrazit[span_11](start_span)[span_11](end_span) */
+    --accent-color: #C5A059;    /* Gedimmtes Gold / Messing[span_12](start_span)[span_12](end_span) */
+    --text-color: #F4F4F2;      /* Helles Off-White[span_13](start_span)[span_13](end_span) */
+    --card-bg: #22262B;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'Lora', serif;
+    margin: 0;
+    padding: 0;
+}
+
+h1, h2, h3, .badge {
+    font-family: 'Montserrat', sans-serif;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.hero {
+    text-align: center;
+    padding: 4rem 0;
+    border-bottom: 1px solid rgba(197, 160, 89, 0.2);
+}
+
+.hero h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    margin: 0.5rem 0;
+}
+
+.hero h1 span {
+    color: var(--accent-color);
+}
+
+.badge {
+    background-color: rgba(197, 160, 89, 0.1);
+    color: var(--accent-color);
+    padding: 0.4rem 1rem;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    border: 1px solid rgba(197, 160, 89, 0.3);
+}
+
+footer {
+    text-align: center;
+    padding: 2rem;
+    margin-top: 4rem;
+    border-top: 1px solid rgba(197, 160, 89, 0.1);
+    font-size: 0.9rem;
+    opacity: 0.7;
+}
