@@ -1,5 +1,23 @@
 [
     {
+        "id": "feed-item-103",
+        "title": "Professional Carbon Drone 4K",
+        "old_price": 1299.0,
+        "new_price": 499.0,
+        "discount": 62,
+        "shop": "SkyTech Global",
+        "url": "https://example.com/product103?affid=glitchradar-21"
+    },
+    {
+        "id": "feed-item-101",
+        "title": "UltraWide Curved Gaming Display 34 Zoll",
+        "old_price": 799.0,
+        "new_price": 299.0,
+        "discount": 63,
+        "shop": "ElectroWorld",
+        "url": "https://example.com/product101?affid=glitchradar-21"
+    },
+    {
         "id": "test-deal-telegram-04",
         "title": "High-End OLED Gaming Monitor (Preisfehler)",
         "old_price": 999.0,
