@@ -1,5 +1,14 @@
 [
     {
+        "id": "channel-test-id-05",
+        "title": "High-End OLED Gaming Monitor 4K (Kanal-Test)",
+        "old_price": 999.0,
+        "new_price": 399.0,
+        "discount": 60,
+        "shop": "GlitchTech Store",
+        "url": "https://duhrrom11.github.io/glitchradar/?affid=glitchradar-21"
+    },
+    {
         "id": "channel-loop-test-01",
         "title": "High-End OLED Gaming Monitor 4K (Preisfehler-Test)",
         "old_price": 999.0,
