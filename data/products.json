@@ -1,5 +1,14 @@
 [
     {
+        "id": "channel-test-id-07",
+        "title": "Ultra-Wide Gaming Monitor 4K 144Hz (Kanal-Broadcast Test)",
+        "old_price": 899.0,
+        "new_price": 349.0,
+        "discount": 61,
+        "shop": "ElectroWorld Pro",
+        "url": "https://duhrrom11.github.io/glitchradar/?affid=glitchradar-21"
+    },
+    {
         "id": "channel-test-id-06",
         "title": "Pro Wireless Noise Cancelling Headphones (Live-Test)",
         "old_price": 349.0,
