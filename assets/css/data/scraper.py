@@ -1,5 +1,7 @@
 import json
 import os
+import urllib.request
+import urllib.parse
 
 DATA_FILE = "data/products.json"
 
@@ -17,32 +19,64 @@ def save_products(products):
     with open(DATA_FILE, "w", encoding="utf-8") as f:
         json.dump(products, f, ensure_ascii=False, indent=4)
 
+def send_telegram_alert(deal):
+    token = os.environ.get("TELEGRAM_TOKEN")
+    chat_id = os.environ.get("TELEGRAM_CHAT_ID")
+    
+    if not token or not chat_id:
+        print("Telegram Secrets nicht gefunden. Überspringe Push-Benachrichtigung.")
+        return
+
+    message = (
+        f"🚨 *NEUE PREISANOMALIE ENTDECKT!*\n\n"
+        f"*{deal['title']}*\n"
+        f"🔥 Rabatt: *{deal['discount']}%*\n"
+        f"💰 Preis: *{deal['new_price']:.2f} €* (statt ~{deal['old_price']:.2f} €)\n"
+        f"🏪 Shop: {deal['shop']}\n\n"
+        f"[Zum Deal]({deal['url']})"
+    )
+    
+    url = f"https://api.telegram.org/bot{token}/sendMessage"
+    payload = {
+        "chat_id": chat_id,
+        "text": message,
+        "parse_mode": "Markdown"
+    }
+    
+    data = urllib.parse.urlencode(payload).encode("utf-8")
+    try:
+        req = urllib.request.Request(url, data=data, method="POST")
+        with urllib.request.urlopen(req) as response:
+            print("Telegram Push erfolgreich gesendet!")
+    except Exception as e:
+        print(f"Fehler beim Senden der Telegram-Nachricht: {e}")
+
 def run_scraper():
     print("GlitchRadar Scraper gestartet...")
-
-    # Hier binden wir später die echten Affiliate-Feeds ein.
-    # Für den Test simulieren wir einen gefundenen Preisfehler (>50% Rabatt):
+    
+    # Test-Deal (wird beim echten Scraper später durch echte Feeds ersetzt)
     sample_deal = {
-        "id": "test-deal-01",
+        "id": "test-deal-telegram-01",
         "title": "High-End OLED Gaming Monitor (Preisfehler)",
         "old_price": 999.00,
         "new_price": 399.00,
         "discount": 60,
         "shop": "TechStore Test",
-        "url": "https://example.com"
+        "url": "https://duhrrom11.github.io/glitchradar/"
     }
 
     products = load_products()
-
-    # Prüfen, ob der Deal schon da ist (Deduplizierung)
     existing_ids = [p["id"] for p in products]
+    
     if sample_deal["id"] not in existing_ids:
-        products.insert(0, sample_deal)  # Neuer Deal nach oben
+        products.insert(0, sample_deal)
+        save_products(products)
         print(f"Neuen Deal hinzugefügt: {sample_deal['title']}")
+        # Telegram Push auslösen!
+        send_telegram_alert(sample_deal)
     else:
-        print("Deal existiert bereits.")
+        print("Deal existiert bereits, kein Push nötig.")
 
-    save_products(products)
     print("Scraper erfolgreich beendet.")
 
 if __name__ == "__main__":
