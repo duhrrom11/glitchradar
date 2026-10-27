@@ -1,5 +1,14 @@
 [
     {
+        "id": "channel-test-id-08",
+        "title": "Ergonomic Mechanical Gaming Keyboard RGB (Live-Kanal-Test)",
+        "old_price": 199.0,
+        "new_price": 79.0,
+        "discount": 60,
+        "shop": "KeyCraft Pro",
+        "url": "https://duhrrom11.github.io/glitchradar/?affid=glitchradar-21"
+    },
+    {
         "id": "channel-test-id-07",
         "title": "Ultra-Wide Gaming Monitor 4K 144Hz (Kanal-Broadcast Test)",
         "old_price": 899.0,
