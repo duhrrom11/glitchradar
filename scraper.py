@@ -55,7 +55,7 @@ def run_scraper():
     print("GlitchRadar Scraper gestartet...")
     
     sample_deal = {
-        "id": "test-deal-telegram-03",
+        "id": "test-deal-telegram-04",
         "title": "High-End OLED Gaming Monitor (Preisfehler)",
         "old_price": 999.00,
         "new_price": 399.00,
