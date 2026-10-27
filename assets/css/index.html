@@ -1,1 +1,74 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GlitchRadar – Live Price Anomaly Finder</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <!-- Google Fonts: Montserrat & Lora -->
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="hero">
+        <div class="container">
+            <span class="badge">LIVE SYSTEM ACTIVE</span>
+            <h1>Glitch<span>Radar</span></h1>
+            <p>Echtzeit-Überwachung von Tausenden Onlineshops. Wir filtern extreme Preisfehler und Flash-Sales (&gt;50%) heraus.</p>
+        </div>
+    </header>
 
+    <main class="container">
+        <section id="deals-feed">
+            <!-- Hier lädt das Skript gleich automatisch die Produkte -->
+            <p class="loading">Scanne Datenströme nach Preisfehlern...</p>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 GlitchRadar. Powered by automated multi-shop data feeds.</p>
+    </footer>
+
+    <script>
+        // Lädt die products.json und baut die Produktkarten im Dark-Tech-Look
+        fetch('data/products.json')
+            .then(response => response.json())
+            .then(products => {
+                const feed = document.getElementById('deals-feed');
+                
+                if (!products || products.length === 0) {
+                    feed.innerHTML = '<p style="text-align:center; opacity:0.7;">Aktuell keine Anomalien im System. Der Radar scannt weiter...</p>';
+                    return;
+                }
+                
+                let html = '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">';
+                
+                products.forEach(p => {
+                    html += `
+                        <div style="background-color: var(--card-bg, #22262B); border: 1px solid rgba(197, 160, 89, 0.2); border-radius: 8px; padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between;">
+                            <div>
+                                <span style="background-color: rgba(197, 160, 89, 0.1); color: var(--accent-color); padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.75rem; font-family: 'Montserrat', sans-serif; font-weight: 600;">-${p.discount}% RABATT</span>
+                                <h3 style="font-family: 'Montserrat', sans-serif; font-size: 1.2rem; margin: 1rem 0 0.5rem 0; color: var(--text-color);">${p.title}</h3>
+                                <p style="font-size: 0.9rem; opacity: 0.7; margin: 0 0 1rem 0;">Shop: <strong>${p.shop}</strong></p>
+                            </div>
+                            <div>
+                                <div style="margin-bottom: 1rem;">
+                                    <span style="text-decoration: line-through; opacity: 0.5; margin-right: 10px; font-size: 0.9rem;">${p.old_price.toFixed(2)} €</span>
+                                    <span style="color: var(--accent-color); font-size: 1.3rem; font-weight: 700; font-family: 'Montserrat', sans-serif;">${p.new_price.toFixed(2)} €</span>
+                                enddiv
+                                </div>
+                                <a href="${p.url}" target="_blank" style="display: block; text-align: center; background-color: var(--accent-color); color: var(--bg-color); padding: 0.7rem; border-radius: 4px; text-decoration: none; font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 0.9rem; transition: opacity 0.2s;">Zum Deal &rarr;</a>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                html += '</div>';
+                feed.innerHTML = html;
+            })
+            .catch(err => {
+                console.error('Fehler beim Laden der Produkte:', err);
+                document.getElementById('deals-feed').innerHTML = '<p style="text-align:center; color:#ff6b6b;">Fehler beim Laden des Datenstroms.</p>';
+            });
+    </script>
+</body>
+</html>
