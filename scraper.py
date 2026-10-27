@@ -41,22 +41,22 @@ def send_telegram_message(chat_id, message, token):
         print(f"Fehler bei {chat_id}: {e}")
 
 def run_scraper():
-    print("GlitchRadar Test-Scraper gestartet...")
+    print("GlitchRadar Scraper mit Kanal-Broadcast gestartet...")
     
     token = os.environ.get("TELEGRAM_TOKEN")
     private_chat_id = os.environ.get("TELEGRAM_CHAT_ID")
-    channel_id = os.environ.get("TELEGRAM_CHANNEL_ID") # Entweder numerische ID (-100...) oder @glitchradarlive
+    channel_id = os.environ.get("TELEGRAM_CHANNEL_ID")
 
     existing_products = load_products()
     existing_ids = [p.get("id") for p in existing_products if isinstance(p, dict)]
     
     # Frischer Test-Deal mit neuer eindeutiger ID
     sample_deal = {
-        "id": "channel-test-id-06",
-        "title": "Pro Wireless Noise Cancelling Headphones (Live-Test)",
-        "old_price": 349.00,
-        "new_price": 139.00,
-        "shop": "AudioTech Direct",
+        "id": "channel-test-id-07",
+        "title": "Ultra-Wide Gaming Monitor 4K 144Hz (Kanal-Broadcast Test)",
+        "old_price": 899.00,
+        "new_price": 349.00,
+        "shop": "ElectroWorld Pro",
         "raw_url": "https://duhrrom11.github.io/glitchradar/"
     }
 
@@ -92,12 +92,12 @@ def run_scraper():
                 f"⚡ Mehr Fehler auf: https://duhrrom11.github.io/glitchradar/"
             )
 
-            # An privaten Chat senden (falls hinterlegt)
+            # An privaten Chat senden
             if private_chat_id:
                 print(f"Sende an privaten Chat: {private_chat_id}")
                 send_telegram_message(private_chat_id, message, token)
 
-            # An den öffentlichen Kanal senden
+            # An den öffentlichen Kanal senden (@glitchradarlive)
             if channel_id:
                 print(f"Sende an Kanal: {channel_id}")
                 send_telegram_message(channel_id, message, token)
