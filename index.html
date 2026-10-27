@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GlitchRadar – Live Price Anomaly Finder</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="hero">
+        <div class="container">
+            <span class="badge">LIVE SYSTEM ACTIVE</span>
+            <h1>Glitch<span>Radar</span></h1>
+            <p>Echtzeit-Überwachung von Tausenden Onlineshops. Wir filtern extreme Preisfehler und Flash-Sales (&gt;50%) heraus.</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <section id="deals-feed">
+            <p class="loading" style="text-align:center; opacity:0.7;">Lade Datenströme...</p>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 GlitchRadar. Powered by automated multi-shop data feeds.</p>
+    </footer>
+
+    <script>
+        // Fallback-Produkte, damit die Seite sofort saubere Karten im Dark-Tech-Look zeigt
+        const fallbackProducts = [
+            {
+                title: "High-End OLED Gaming Monitor (Preisfehler)",
+                old_price: 999.00,
+                new_price: 399.00,
+                discount: 60,
+                shop: "TechStore Test",
+                url: "#"
+            },
+            {
+                title: "Cyberpunk Edition Mechanical Keyboard",
+                old_price: 249.00,
+                new_price: 89.00,
+                discount: 64,
+                shop: "KeyVault Global",
+                url: "#"
+            }
+        ];
+
+        function displayDeals(products) {
+            const feed = document.getElementById('deals-feed');
+            if (!products || products.length === 0) {
+                products = fallbackProducts;
+            }
+            
+            let html = '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">';
+            
+            products.forEach(p => {
+                html += `
+                    <div style="background-color: #22262B; border: 1px solid rgba(197, 160, 89, 0.2); border-radius: 8px; padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between;">
+                        <div>
+                            <span style="background-color: rgba(197, 160, 89, 0.1); color: #C5A059; padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.75rem; font-family: 'Montserrat', sans-serif; font-weight: 600;">-${p.discount}% RABATT</span>
+                            <h3 style="font-family: 'Montserrat', sans-serif; font-size: 1.2rem; margin: 1rem 0 0.5rem 0; color: #F4F4F2;">${p.title}</h3>
+                            <p style="font-size: 0.9rem; opacity: 0.7; margin: 0 0 1rem 0;">Shop: <strong>${p.shop}</strong></p>
+                        </div>
+                        <div>
+                            <div style="margin-bottom: 1rem;">
+                                <span style="text-decoration: line-through; opacity: 0.5; margin-right: 10px; font-size: 0.9rem;">${p.old_price.toFixed(2)} €</span>
+                                <span style="color: #C5A059; font-size: 1.3rem; font-weight: 700; font-family: 'Montserrat', sans-serif;">${p.new_price.toFixed(2)} €</span>
+                            </div>
+                            <a href="${p.url}" target="_blank" style="display: block; text-align: center; background-color: #C5A059; color: #1A1D20; padding: 0.7rem; border-radius: 4px; text-decoration: none; font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 0.9rem;">Zum Deal &rarr;</a>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            feed.innerHTML = html;
+        }
+
+        // Versuche die echte JSON zu laden, nutze im Fehlerfall den Fallback
+        fetch('data/products.json')
+            .then(res => res.json())
+            .then(data => {
+                if (data && data.length > 0) {
+                    displayDeals(data);
+                } else {
+                    displayDeals(fallbackProducts);
+                }
+            })
+            .catch(err => {
+                console.log("Nutze Fallback:", err);
+                displayDeals(fallbackProducts);
+            });
+    </script>
+</body>
+</html>
