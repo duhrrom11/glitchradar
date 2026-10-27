@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GlitchRadar – Live Price Anomaly Finder</title>
     <link rel="stylesheet" href="assets/css/style.css">
-    <!-- Google Fonts: Montserrat & Lora -->
     <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -19,8 +18,7 @@
 
     <main class="container">
         <section id="deals-feed">
-            <!-- Hier lädt das Skript gleich automatisch die Produkte -->
-            <p class="loading">Scanne Datenströme nach Preisfehlern...</p>
+            <p class="loading" style="text-align:center; opacity:0.7;">Scanne Datenströme nach Preisfehlern...</p>
         </section>
     </main>
 
@@ -29,7 +27,6 @@
     </footer>
 
     <script>
-        // Lädt die products.json und baut die Produktkarten im Dark-Tech-Look
         fetch('data/products.json')
             .then(response => response.json())
             .then(products => {
@@ -54,9 +51,8 @@
                                 <div style="margin-bottom: 1rem;">
                                     <span style="text-decoration: line-through; opacity: 0.5; margin-right: 10px; font-size: 0.9rem;">${p.old_price.toFixed(2)} €</span>
                                     <span style="color: var(--accent-color); font-size: 1.3rem; font-weight: 700; font-family: 'Montserrat', sans-serif;">${p.new_price.toFixed(2)} €</span>
-                                enddiv
                                 </div>
-                                <a href="${p.url}" target="_blank" style="display: block; text-align: center; background-color: var(--accent-color); color: var(--bg-color); padding: 0.7rem; border-radius: 4px; text-decoration: none; font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 0.9rem; transition: opacity 0.2s;">Zum Deal &rarr;</a>
+                                <a href="${p.url}" target="_blank" style="display: block; text-align: center; background-color: var(--accent-color); color: var(--bg-color); padding: 0.7rem; border-radius: 4px; text-decoration: none; font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 0.9rem;">Zum Deal &rarr;</a>
                             </div>
                         </div>
                     `;
