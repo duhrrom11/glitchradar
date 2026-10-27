@@ -27,7 +27,7 @@
     </footer>
 
     <script>
-        fetch('data/products.json')
+        fetch('./data/products.json')
             .then(response => response.json())
             .then(products => {
                 const feed = document.getElementById('deals-feed');
