@@ -1,5 +1,14 @@
 [
     {
+        "id": "channel-loop-test-01",
+        "title": "High-End OLED Gaming Monitor 4K (Preisfehler-Test)",
+        "old_price": 999.0,
+        "new_price": 399.0,
+        "discount": 60,
+        "shop": "GlitchTech Store",
+        "url": "https://duhrrom11.github.io/glitchradar/?affid=glitchradar-21"
+    },
+    {
         "id": "feed-item-103",
         "title": "Professional Carbon Drone 4K",
         "old_price": 1299.0,
