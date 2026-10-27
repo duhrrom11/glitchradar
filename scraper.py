@@ -27,20 +27,20 @@ def send_telegram_alert(deal):
         print("Hinweis: Telegram Secrets sind noch nicht hinterlegt (überspringe Push).")
         return
 
+    # Reiner Text ohne fehleranfälliges Markdown (verhindert HTTP 400 Fehler)
     message = (
-        f"🚨 *NEUE PREISANOMALIE ENTDECKT!*\n\n"
-        f"*{deal['title']}*\n"
-        f"🔥 Rabatt: *{deal['discount']}%*\n"
-        f"💰 Preis: *{deal['new_price']:.2f} €* (statt ~{deal['old_price']:.2f} €)\n"
+        f"🚨 NEUE PREISANOMALIE ENTDECKT!\n\n"
+        f"Titel: {deal['title']}\n"
+        f"🔥 Rabatt: {deal['discount']}%\n"
+        f"💰 Preis: {deal['new_price']:.2f} € (statt ~{deal['old_price']:.2f} €)\n"
         f"🏪 Shop: {deal['shop']}\n\n"
-        f"[Zum Deal]({deal['url']})"
+        f"Direkt zum Deal: {deal['url']}"
     )
     
     url = f"https://api.telegram.org/bot{token}/sendMessage"
     payload = {
         "chat_id": chat_id,
-        "text": message,
-        "parse_mode": "Markdown"
+        "text": message
     }
     
     data = urllib.parse.urlencode(payload).encode("utf-8")
@@ -55,7 +55,7 @@ def run_scraper():
     print("GlitchRadar Scraper gestartet...")
     
     sample_deal = {
-        "id": "test-deal-telegram-01",
+        "id": "test-deal-telegram-03",
         "title": "High-End OLED Gaming Monitor (Preisfehler)",
         "old_price": 999.00,
         "new_price": 399.00,
