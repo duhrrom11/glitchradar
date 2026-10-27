@@ -52,11 +52,11 @@ def run_scraper():
     
     # Frischer Test-Deal mit neuer eindeutiger ID
     sample_deal = {
-        "id": "channel-test-id-07",
-        "title": "Ultra-Wide Gaming Monitor 4K 144Hz (Kanal-Broadcast Test)",
-        "old_price": 899.00,
-        "new_price": 349.00,
-        "shop": "ElectroWorld Pro",
+        "id": "channel-test-id-08",
+        "title": "Ergonomic Mechanical Gaming Keyboard RGB (Live-Kanal-Test)",
+        "old_price": 199.00,
+        "new_price": 79.00,
+        "shop": "KeyCraft Pro",
         "raw_url": "https://duhrrom11.github.io/glitchradar/"
     }
 
