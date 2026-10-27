@@ -1,5 +1,14 @@
 [
     {
+        "id": "channel-test-id-06",
+        "title": "Pro Wireless Noise Cancelling Headphones (Live-Test)",
+        "old_price": 349.0,
+        "new_price": 139.0,
+        "discount": 60,
+        "shop": "AudioTech Direct",
+        "url": "https://duhrrom11.github.io/glitchradar/?affid=glitchradar-21"
+    },
+    {
         "id": "channel-test-id-05",
         "title": "High-End OLED Gaming Monitor 4K (Kanal-Test)",
         "old_price": 999.0,
