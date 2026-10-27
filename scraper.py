@@ -1,12 +1,10 @@
-import csv
-import io
 import json
 import os
 import urllib.parse
 import urllib.request
 
 DATA_FILE = "data/products.json"
-AFFILIATE_TAG = "glitchradar-21"  # Deine persönliche Affiliate-ID[span_3](start_span)[span_3](end_span)
+AFFILIATE_TAG = "glitchradar-21"  # Deine persönliche Affiliate-ID
 
 def load_products():
     if os.path.exists(DATA_FILE):
@@ -28,98 +26,85 @@ def apply_affiliate_link(url):
     separator = "&" if "?" in url else "?"
     return f"{url}{separator}affid={AFFILIATE_TAG}"
 
-def send_telegram_broadcast(deal):
-    token = os.environ.get("TELEGRAM_TOKEN")
-    private_chat_id = os.environ.get("TELEGRAM_CHAT_ID")
-    channel_id = os.environ.get("TELEGRAM_CHANNEL_ID")
-    
-    if not token:
-        return
-
-    # Edler Text für den öffentlichen Kanal & Push
-    message = (
-        f"🚨 PREISANOMALIE ENTDECKT!\n\n"
-        f"📦 {deal['title']}\n"
-        f"🔥 Rabatt: -{deal['discount']}%\n"
-        f"💰 Neuer Preis: {deal['new_price']:.2f} € (statt ~{deal['old_price']:.2f} €)\n"
-        f"🏪 Shop: {deal['shop']}\n\n"
-        f"👉 Direkt zum Deal: {deal['url']}\n\n"
-        f"⚡ Mehr Fehler auf: https://duhrrom11.github.io/glitchradar/"
-    )
-
+def send_telegram_message(chat_id, message, token):
     url = f"https://api.telegram.org/bot{token}/sendMessage"
-
-    # 1. An dich privat senden (optional zur Kontrolle)
-    if private_chat_id:
-        try:
-            payload = {"chat_id": private_chat_id, "text": message}
-            data = urllib.parse.urlencode(payload).encode("utf-8")
-            req = urllib.request.Request(url, data=data, method="POST")
-            urllib.request.urlopen(req)
-        except Exception as e:
-            print(f"Privater Push Fehler: {e}")
-
-    # 2. In den öffentlichen Kanal broadcasten (Traffic-Loop)[span_4](start_span)[span_4](end_span)
-    if channel_id:
-        try:
-            payload = {"chat_id": channel_id, "text": message}
-            data = urllib.parse.urlencode(payload).encode("utf-8")
-            req = urllib.request.Request(url, data=data, method="POST")
-            with urllib.request.urlopen(req) as response:
-                print("Erfolgreich in den Telegram-Kanal gepostet!")
-        except Exception as e:
-            print(f"Kanal Broadcast Fehler: {e}")
+    payload = {"chat_id": chat_id, "text": message}
+    data = urllib.parse.urlencode(payload).encode("utf-8")
+    try:
+        req = urllib.request.Request(url, data=data, method="POST")
+        with urllib.request.urlopen(req) as response:
+            print(f"Erfolgreich an {chat_id} gesendet!")
+    except urllib.error.HTTPError as e:
+        error_body = e.read().decode('utf-8')
+        print(f"HTTP Fehler bei {chat_id}: {e.code} - {error_body}")
+    except Exception as e:
+        print(f"Fehler bei {chat_id}: {e}")
 
 def run_scraper():
-    print("GlitchRadar Traffic-Loop Scraper gestartet...")
+    print("GlitchRadar Test-Scraper gestartet...")
     
+    token = os.environ.get("TELEGRAM_TOKEN")
+    private_chat_id = os.environ.get("TELEGRAM_CHAT_ID")
+    channel_id = os.environ.get("TELEGRAM_CHANNEL_ID") # Sollte @glitchradarlive sein
+
     existing_products = load_products()
     existing_ids = [p.get("id") for p in existing_products if isinstance(p, dict)]
     
-    # Test-Anomalie für den Kanal-Loop
-    incoming_items = [
-        {
-            "id": "channel-loop-test-01",
-            "title": "High-End OLED Gaming Monitor 4K (Preisfehler-Test)",
-            "old_price": 999.00,
-            "new_price": 399.00,
-            "shop": "GlitchTech Store",
-            "raw_url": "https://duhrrom11.github.io/glitchradar/"
-        }
-    ]
+    # Frischer Test-Deal mit neuer ID für den Kanal-Test
+    sample_deal = {
+        "id": "channel-test-id-05",
+        "title": "High-End OLED Gaming Monitor 4K (Kanal-Test)",
+        "old_price": 999.00,
+        "new_price": 399.00,
+        "shop": "GlitchTech Store",
+        "raw_url": "https://duhrrom11.github.io/glitchradar/"
+    }
 
-    new_found_count = 0
+    old_p = float(sample_deal["old_price"])
+    new_p = float(sample_deal["new_price"])
+    discount_percent = int(round((1 - (new_p / old_p)) * 100))
 
-    for item in incoming_items:
-        old_p = float(item["old_price"])
-        new_p = float(item["new_price"])
-        discount_percent = int(round((1 - (new_p / old_p)) * 100))
+    if discount_percent >= 50 and sample_deal["id"] not in existing_ids:
+        final_url = apply_affiliate_link(sample_deal["raw_url"])
         
-        if discount_percent >= 50 and item["id"] not in existing_ids:
-            final_url = apply_affiliate_link(item["raw_url"])
-            
-            processed_deal = {
-                "id": item["id"],
-                "title": item["title"],
-                "old_price": old_p,
-                "new_price": new_p,
-                "discount": discount_percent,
-                "shop": item["shop"],
-                "url": final_url
-            }
-            
-            existing_products.insert(0, processed_deal)
-            print(f"Neuer Deal gefunden: {processed_deal['title']}")
-            
-            # Broadcast in den Kanal auslösen!
-            send_telegram_broadcast(processed_deal)
-            new_found_count += 1
-
-    if new_found_count > 0:
+        processed_deal = {
+            "id": sample_deal["id"],
+            "title": sample_deal["title"],
+            "old_price": old_p,
+            "new_price": new_p,
+            "discount": discount_percent,
+            "shop": sample_deal["shop"],
+            "url": final_url
+        }
+        
+        existing_products.insert(0, processed_deal)
         save_products(existing_products)
-        print("Produkte gespeichert.")
+        print(f"Test-Deal gespeichert: {processed_deal['title']}")
+
+        if token:
+            message = (
+                f"🚨 PREISANOMALIE ENTDECKT!\n\n"
+                f"📦 {processed_deal['title']}\n"
+                f"🔥 Rabatt: -{processed_deal['discount']}%\n"
+                f"💰 Neuer Preis: {processed_deal['new_price']:.2f} € (statt ~{processed_deal['old_price']:.2f} €)\n"
+                f"🏪 Shop: {processed_deal['shop']}\n\n"
+                f"👉 Direkt zum Deal: {processed_deal['url']}\n\n"
+                f"⚡ Mehr Fehler auf: https://duhrrom11.github.io/glitchradar/"
+            )
+
+            # An privaten Chat senden (falls hinterlegt)
+            if private_chat_id:
+                print(f"Sende an privaten Chat: {private_chat_id}")
+                send_telegram_message(private_chat_id, message, token)
+
+            # An den öffentlichen Kanal senden (@glitchradarlive)
+            if channel_id:
+                print(f"Sende an öffentlichen Kanal: {channel_id}")
+                send_telegram_message(channel_id, message, token)
+        else:
+            print("Kein TELEGRAM_TOKEN gefunden.")
     else:
-        print("Keine neuen Deals.")
+        print("Deal existiert bereits oder Rabatt unter 50%.")
 
     print("Scraper beendet.")
 
