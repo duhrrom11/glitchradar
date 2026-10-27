@@ -53,7 +53,7 @@ def run_scraper():
     # Frischer Test-Deal mit neuer ID für den Kanal-Test
     sample_deal = {
         "id": "channel-test-id-05",
-        "title": "High-End OLED Gaming Monitor 4K (Kanal-Test)",
+        "title": "High-End OLoED Gaming Monitor 4K (Kanal-Test)",
         "old_price": 999.00,
         "new_price": 399.00,
         "shop": "GlitchTech Store",
