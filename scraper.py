@@ -1,11 +1,17 @@
+import csv
+import io
 import json
 import os
 import urllib.parse
 import urllib.request
 
 DATA_FILE = "data/products.json"
-ASINS_FILE = "data/asins.json"  # Hier liegen deine hunderten/tausenden zu prüfenden Produkte
-AMAZON_TAG = "glitchradar03-21"  # Deine Amazon Store-ID
+ASINS_FILE = "data/asins.json"
+
+# Deine persönlichen Affiliate-IDs
+AMAZON_TAG = "glitchradar03-21"       # Amazon PartnerNet Store-ID
+EBAY_CAMP_ID = "5339233764"           # eBay Partner Network Campaign-ID
+AWIN_AFF_ID = "glitchradar-21"        # Awin / Standard Affiliate-ID
 
 def load_json(filepath):
     if os.path.exists(filepath):
@@ -21,8 +27,33 @@ def save_json(filepath, data):
     with open(filepath, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=4)
 
-def apply_amazon_affiliate(asin):
-    return f"https://www.amazon.de/dp/{asin}?tag={AMAZON_TAG}"
+def apply_affiliate_link(url, shop_name=""):
+    """
+    Erkennt den Shop automatisch und fügt die korrekten Tracking-Parameter an.
+    """
+    if not url:
+        return "https://duhrrom11.github.io/glitchradar/"
+        
+    shop_lower = shop_name.lower()
+    separator = "&" if "?" in url else "?"
+    
+    # 1. Amazon PartnerNet
+    if "amazon" in shop_lower:
+        if "tag=" not in url:
+            return f"{url}{separator}tag={AMAZON_TAG}"
+        return url
+        
+    # 2. eBay Partner Network (ePN)
+    elif "ebay" in shop_lower:
+        if "campid=" not in url:
+            return f"{url}{separator}mkeid=1&mkcid=1&campid={EBAY_CAMP_ID}&toolid=10001&customid=glitchradar"
+        return url
+        
+    # 3. Awin / Standard Netzwerke (Alternate, Notebooksbilliger, Cyberport etc.)
+    else:
+        if "affid=" not in url:
+            return f"{url}{separator}affid={AWIN_AFF_ID}"
+        return url
 
 def send_telegram_message(chat_id, message, token):
     url = f"https://api.telegram.org/bot{token}/sendMessage"
@@ -33,10 +64,35 @@ def send_telegram_message(chat_id, message, token):
         with urllib.request.urlopen(req):
             pass
     except Exception as e:
-        print(f"Telegram Fehler: {e}")
+        print(f"Telegram Fehler bei {chat_id}: {e}")
+
+def fetch_live_feed(feed_url, shop_name):
+    """
+    Lädt Live-Feeds (CSV/XML) von Awin/eBay direkt vom Server herunter.
+    """
+    try:
+        req = urllib.request.Request(feed_url, headers={'User-Agent': 'Mozilla/5.0'})
+        with urllib.request.urlopen(req, timeout=15) as response:
+            content = response.read().decode('utf-8', errors='ignore')
+            f = io.StringIO(content)
+            reader = csv.DictReader(f)
+            items = []
+            for row in reader:
+                items.append({
+                    "id": row.get("id") or row.get("sku") or row.get("product_id"),
+                    "title": row.get("title") or row.get("name"),
+                    "old_price": row.get("old_price") or row.get("rrp") or row.get("price_old"),
+                    "new_price": row.get("new_price") or row.get("price") or row.get("price_current"),
+                    "shop": shop_name,
+                    "url": row.get("url") or row.get("link")
+                })
+            return items
+    except Exception as e:
+        print(f"Fehler beim Laden des Feeds für {shop_name}: {e}")
+        return []
 
 def run_scraper():
-    print("GlitchRadar Massen-Scraper (Externer Daten-Modus) gestartet...")
+    print("GlitchRadar Dual-Track Scraper gestartet...")
     
     token = os.environ.get("TELEGRAM_TOKEN")
     private_chat_id = os.environ.get("TELEGRAM_CHAT_ID")
@@ -45,49 +101,73 @@ def run_scraper():
     existing_products = load_json(DATA_FILE)
     existing_ids = [p.get("id") for p in existing_products if isinstance(p, dict)]
     
-    # Lädt die große Liste aller zu überwachenden Produkte aus einer separaten Datei
-    target_deals = load_json(ASINS_FILE)
-    
-    if not target_deals:
-        print("Keine Produkte in 'data/asins.json' gefunden.")
+    all_incoming_deals = []
+
+    # --- SPUR 1: Amazon (Kuratierte asins.json Basis) ---
+    amazon_deals = load_json(ASINS_FILE)
+    for d in amazon_deals:
+        if "asin" in d and not d.get("url"):
+            d["url"] = f"https://www.amazon.de/dp/{d['asin']}"
+        if "shop" not in d:
+            d["shop"] = "Amazon"
+        all_incoming_deals.append(d)
+
+    # --- SPUR 2: Awin & eBay (Live-Feeds) ---
+    # Sobald deine echten Feed-URLs von Awin/eBay vorliegen, kannst du sie hier eintragen:
+    live_feed_sources = [
+        # {"url": "https://example.com/ deiner_awin_feed.csv", "shop": "Alternate"},
+        # {"url": "https://example.com/ deiner_ebay_feed.csv", "shop": "eBay"}
+    ]
+
+    for source in live_feed_sources:
+        print(ج=f"Lade Live-Feed von {source['shop']}...")
+        feed_items = fetch_live_feed(source["url"], source["shop"])
+        all_incoming_deals.extend(feed_items)
+
+    if not all_incoming_deals:
+        print("Keine Produkte zum Verarbeiten gefunden.")
         return
 
     new_items_added = 0
+    print(f"Analysiere insgesamt {len(all_incoming_deals)} Produkte auf Preisfehler...")
 
-    for sample_deal in target_deals:
+    for sample_deal in all_incoming_deals:
         product_id = sample_deal.get("id")
-        if product_id in existing_ids:
+        if not product_id or product_id in existing_ids:
             continue
 
         try:
             old_p = float(sample_deal["old_price"])
             new_p = float(sample_deal["new_price"])
-        except (KeyError, ValueError):
+        except (KeyError, ValueError, TypeError):
             continue
 
-        if old_p <= 0:
+        if old_p <= 0 or new_p >= old_p:
             continue
 
         discount_percent = int(round((1 - (new_p / old_p)) * 100))
 
-        # Filter: Nur Deals ab 50% Rabatt
+        # Harter Filter: Nur absolute Preisanomalien ab 50% Rabatt
         if discount_percent >= 50:
-            asin = sample_deal.get("asin")
-            final_url = apply_amazon_affiliate(asin) if asin else sample_deal.get("url", "https://duhrrom11.github.io/glitchradar/")
+            shop_name = sample_deal.get("shop", "Multi-Shop")
+            raw_url = sample_deal.get("url")
+            
+            final_url = apply_affiliate_link(raw_url, shop_name)
             
             processed_deal = {
-                "id": product_id,
-                "title": sample_deal["title"],
+                "id": str(product_id),
+                "title": sample_deal.get("title", "Unbekanntes Produkt"),
                 "old_price": old_p,
                 "new_price": new_p,
                 "discount": discount_percent,
-                "shop": sample_deal.get("shop", "Amazon"),
+                "shop": shop_name,
                 "url": final_url
             }
             
             existing_products.insert(0, processed_deal)
+            existing_ids.append(str(product_id))
             new_items_added += 1
-            print(f"Treffer: {processed_deal['title']} (-{discount_percent}%)")
+            print(f"🚨 Preisanomalie ({shop_name}): {processed_deal['title']} (-{discount_percent}%)")
 
             if token:
                 message = (
@@ -107,9 +187,9 @@ def run_scraper():
 
     if new_items_added > 0:
         save_json(DATA_FILE, existing_products)
-        print(f"{new_items_added} neue Deals erfolgreich verarbeitet und gespeichert.")
+        print(f"{new_items_added} neue Deals erfolgreich gespeichert und publiziert.")
     else:
-        print("Keine neuen Deals >= 50% Rabatt gefunden.")
+        print("Scraper beendet: Keine neuen Deals >= 50% gefunden.")
 
 if __name__ == "__main__":
     run_scraper()
