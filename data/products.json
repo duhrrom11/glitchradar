@@ -1,1 +1,20 @@
-[]
+[
+    {
+        "id": "rss-auto-B0H4RT5HFM",
+        "title": "Fire Emblem: Fortune's Weave (Nintendo Switch 2)",
+        "old_price": 100.0,
+        "new_price": 40.0,
+        "discount": 60,
+        "shop": "Amazon",
+        "url": "https://www.amazon.de/dp/B0H4RT5HFM?tag=glitchradar03-21"
+    },
+    {
+        "id": "rss-auto-B0BDFLN8NW",
+        "title": "Zoch Burg Appenzell Familienspiel (2–4 Spieler, ab 6 Jahren)",
+        "old_price": 100.0,
+        "new_price": 40.0,
+        "discount": 60,
+        "shop": "Amazon",
+        "url": "https://www.amazon.de/dp/B0BDFLN8NW?tag=glitchradar03-21"
+    }
+]
