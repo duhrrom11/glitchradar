@@ -22,5 +22,21 @@
         "old_price": 100.0,
         "new_price": 40.0,
         "shop": "Amazon"
+    },
+    {
+        "id": "rss-auto-B0GSVF8ZMW",
+        "asin": "B0GSVF8ZMW",
+        "title": "Resonance: A Plague Tale Legacy | Disc | je ►42,99€ | Playstation 5 / Xbox Series X ab ►39,99€ | PS5 | Amazon Prime / Media Markt abholen",
+        "old_price": 100.0,
+        "new_price": 40.0,
+        "shop": "Amazon"
+    },
+    {
+        "id": "rss-auto-B0GSVDT1WP",
+        "asin": "B0GSVDT1WP",
+        "title": "Resonance: A Plague Tale Legacy | Disc | je ►42,99€ | Playstation 5 / Xbox Series X ab ►39,99€ | PS5 | Amazon Prime / Media Markt abholen",
+        "old_price": 100.0,
+        "new_price": 40.0,
+        "shop": "Amazon"
     }
 ]
