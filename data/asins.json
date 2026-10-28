@@ -1,98 +1,42 @@
 [
-{
-"id": "amz-elec-101",
-"asin": "B09B8W1LZ9",
-"title": "High-End Over-Ear ANC Bluetooth Kopfhörer",
-"old_price": 199.99,
-"new_price": 79.99,
-"shop": "Amazon (Elektronik)"
-},
-{
-"id": "amz-elec-102",
-"asin": "B08C1W5N81",
-"title": "True Wireless Earbuds mit Active Noise Cancelling",
-"old_price": 129.99,
-"new_price": 49.99,
-"shop": "Amazon (Elektronik)"
-},
-{
-"id": "amz-elec-103",
-"asin": "B07X8V3L2P",
-"title": "Tragbarer Bluetooth Outdoor Lautsprecher IPX7",
-"old_price": 89.99,
-"new_price": 35.00,
-"shop": "Amazon (Elektronik)"
-},
-{
-"id": "amz-game-201",
-"asin": "B0823W9K1M",
-"title": "Mechanische RGB Gaming Tastatur Red Switches",
-"old_price": 119.99,
-"new_price": 45.00,
-"shop": "Amazon (Gaming)"
-},
-{
-"id": "amz-game-202",
-"asin": "B09XYZ1234",
-"title": "Ultra-Lightweight Ergonomische Gaming Maus",
-"old_price": 79.99,
-"new_price": 29.99,
-"shop": "Amazon (Gaming)"
-},
-{
-"id": "amz-game-203",
-"asin": "B08ABC5678",
-"title": "Profi Gaming Headset 7.1 Surround Sound",
-"old_price": 149.00,
-"new_price": 59.00,
-"shop": "Amazon (Gaming)"
-},
-{
-"id": "amz-office-301",
-"asin": "B07LMN9012",
-"title": "Ergonomischer Chefsessel mit Mesh-Gewebe",
-"old_price": 249.00,
-"new_price": 99.00,
-"shop": "Amazon (Bürobedarf)"
-},
-{
-"id": "amz-office-302",
-"asin": "B08OPQ3456",
-"title": "Höhenverstellbarer Laptop-Ständer aus Aluminium",
-"old_price": 59.99,
-"new_price": 22.50,
-"shop": "Amazon (Bürobedarf)"
-},
-{
-"id": "amz-office-303",
-"asin": "B09RST7890",
-"title": "Elektrischer Schreibtisch-Organizer mit USB-Hub",
-"old_price": 69.99,
-"new_price": 27.99,
-"shop": "Amazon (Bürobedarf)"
-},
-{
-"id": "amz-gadget-401",
-"asin": "B07UVW1234",
-"title": "Smarte LED Schreibtischlampe Dimmbar & Touch",
-"old_price": 59.99,
-"new_price": 22.00,
-"shop": "Amazon (Gadgets)"
-},
-{
-"id": "amz-gadget-402",
-"asin": "B08XYZ5678",
-"title": "10000mAh Powerbank mit Schnellladefunktion",
-"old_price": 49.99,
-"new_price": 18.99,
-"shop": "Amazon (Gadgets)"
-},
-{
-"id": "amz-gadget-403",
-"asin": "B09DEF9012",
-"title": "Kabellose Qi-Ladestation 3-in-1 für Smartphone & Watch",
-"old_price": 79.00,
-"new_price": 29.99,
-"shop": "Amazon (Gadgets)"
-}
+  {
+    "id": "amz-real-01",
+    "asin": "B07WJ6JKDJ",
+    "title": "Logitech G502 HERO High Performance Gaming-Maus",
+    "old_price": 89.99,
+    "new_price": 39.99,
+    "shop": "Amazon"
+  },
+  {
+    "id": "amz-real-02",
+    "asin": "B08GS7748F",
+    "title": "Samsung 980 PRO NVMe M.2 SSD 1TB",
+    "old_price": 149.00,
+    "new_price": 69.00,
+    "shop": "Amazon"
+  },
+  {
+    "id": "amz-real-03",
+    "asin": "B00SAYCVCO",
+    "title": "HyperX Cloud II Gaming Headset",
+    "old_price": 99.99,
+    "new_price": 44.99,
+    "shop": "Amazon"
+  },
+  {
+    "id": "amz-real-04",
+    "asin": "B099F4V2KL",
+    "title": "Anker Nano II 65W USB-C Schnellladegerät",
+    "old_price": 45.99,
+    "new_price": 22.00,
+    "shop": "Amazon"
+  },
+  {
+    "id": "amz-real-05",
+    "asin": "B078211KBB",
+    "title": "Crucial MX500 1TB 2.5 Zoll SATA SSD",
+    "old_price": 85.00,
+    "new_price": 39.00,
+    "shop": "Amazon"
+  }
 ]
