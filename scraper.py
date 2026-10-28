@@ -9,9 +9,9 @@ DATA_FILE = "data/products.json"
 ASINS_FILE = "data/asins.json"
 
 # Deine persönlichen Affiliate-IDs
-AMAZON_TAG = "glitchradar03-21"       # Amazon PartnerNet Store-ID
-EBAY_CAMP_ID = "5339233764"           # eBay Partner Network Campaign-ID
-AWIN_AFF_ID = "glitchradar-21"        # Awin / Standard Affiliate-ID
+AMAZON_TAG = "glitchradar03-21"       # Amazon Store-ID
+EBAY_CAMP_ID = "5339233764"           # eBay ePN Campaign-ID
+AWIN_AFF_ID = "glitchradar-21"        # Awin Publisher-ID / Fallback
 
 def load_json(filepath):
     if os.path.exists(filepath):
@@ -28,28 +28,20 @@ def save_json(filepath, data):
         json.dump(data, f, ensure_ascii=False, indent=4)
 
 def apply_affiliate_link(url, shop_name=""):
-    """
-    Erkennt den Shop automatisch und fügt die korrekten Tracking-Parameter an.
-    """
     if not url:
         return "https://duhrrom11.github.io/glitchradar/"
         
     shop_lower = shop_name.lower()
     separator = "&" if "?" in url else "?"
     
-    # 1. Amazon PartnerNet
     if "amazon" in shop_lower:
         if "tag=" not in url:
             return f"{url}{separator}tag={AMAZON_TAG}"
         return url
-        
-    # 2. eBay Partner Network (ePN)
     elif "ebay" in shop_lower:
         if "campid=" not in url:
             return f"{url}{separator}mkeid=1&mkcid=1&campid={EBAY_CAMP_ID}&toolid=10001&customid=glitchradar"
         return url
-        
-    # 3. Awin / Standard Netzwerke (Alternate, Notebooksbilliger, Cyberport etc.)
     else:
         if "affid=" not in url:
             return f"{url}{separator}affid={AWIN_AFF_ID}"
@@ -67,9 +59,6 @@ def send_telegram_message(chat_id, message, token):
         print(f"Telegram Fehler bei {chat_id}: {e}")
 
 def fetch_live_feed(feed_url, shop_name):
-    """
-    Lädt Live-Feeds (CSV/XML) von Awin/eBay direkt vom Server herunter.
-    """
     try:
         req = urllib.request.Request(feed_url, headers={'User-Agent': 'Mozilla/5.0'})
         with urllib.request.urlopen(req, timeout=15) as response:
@@ -103,7 +92,7 @@ def run_scraper():
     
     all_incoming_deals = []
 
-    # --- SPUR 1: Amazon (Kuratierte asins.json Basis) ---
+    # SPUR 1: Amazon (Kuratierte asins.json Basis)
     amazon_deals = load_json(ASINS_FILE)
     for d in amazon_deals:
         if "asin" in d and not d.get("url"):
@@ -112,15 +101,12 @@ def run_scraper():
             d["shop"] = "Amazon"
         all_incoming_deals.append(d)
 
-    # --- SPUR 2: Awin & eBay (Live-Feeds) ---
-    # Sobald deine echten Feed-URLs von Awin/eBay vorliegen, kannst du sie hier eintragen:
+    # SPUR 2: Awin & eBay (Live-Feeds - hier URLs eintragen, sobald freigeschaltet)
     live_feed_sources = [
-        # {"url": "https://example.com/ deiner_awin_feed.csv", "shop": "Alternate"},
-        # {"url": "https://example.com/ deiner_ebay_feed.csv", "shop": "eBay"}
+        # {"url": "DEINE_AWIN_FEED_URL.csv", "shop": "Alternate"}
     ]
 
     for source in live_feed_sources:
-        print(ج=f"Lade Live-Feed von {source['shop']}...")
         feed_items = fetch_live_feed(source["url"], source["shop"])
         all_incoming_deals.extend(feed_items)
 
@@ -129,7 +115,7 @@ def run_scraper():
         return
 
     new_items_added = 0
-    print(f"Analysiere insgesamt {len(all_incoming_deals)} Produkte auf Preisfehler...")
+    print(f"Analysiere {len(all_incoming_deals)} Produkte...")
 
     for sample_deal in all_incoming_deals:
         product_id = sample_deal.get("id")
@@ -147,16 +133,15 @@ def run_scraper():
 
         discount_percent = int(round((1 - (new_p / old_p)) * 100))
 
-        # Harter Filter: Nur absolute Preisanomalien ab 50% Rabatt
+        # Filter: Nur absolute Preisanomalien ab 50% Rabatt
         if discount_percent >= 50:
             shop_name = sample_deal.get("shop", "Multi-Shop")
             raw_url = sample_deal.get("url")
-            
             final_url = apply_affiliate_link(raw_url, shop_name)
             
             processed_deal = {
                 "id": str(product_id),
-                "title": sample_deal.get("title", "Unbekanntes Produkt"),
+                "title": sample_deal.get("title", "Unbekannt"),
                 "old_price": old_p,
                 "new_price": new_p,
                 "discount": discount_percent,
@@ -179,7 +164,6 @@ def run_scraper():
                     f"👉 Direkt zum Deal: {processed_deal['url']}\n\n"
                     f"⚡ Mehr Fehler auf: https://duhrrom11.github.io/glitchradar/"
                 )
-
                 if private_chat_id:
                     send_telegram_message(private_chat_id, message, token)
                 if channel_id:
@@ -187,7 +171,7 @@ def run_scraper():
 
     if new_items_added > 0:
         save_json(DATA_FILE, existing_products)
-        print(f"{new_items_added} neue Deals erfolgreich gespeichert und publiziert.")
+        print(f"{new_items_added} neue Deals gespeichert und publiziert.")
     else:
         print("Scraper beendet: Keine neuen Deals >= 50% gefunden.")
 
