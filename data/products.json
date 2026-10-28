@@ -1,5 +1,23 @@
 [
     {
+        "id": "rss-auto-B0H4RT5HFM",
+        "title": "Auto-Importiertes Tech-Produkt (B0H4RT5HFM)",
+        "old_price": 150.0,
+        "new_price": 50.0,
+        "discount": 67,
+        "shop": "Amazon",
+        "url": "https://www.amazon.de/dp/B0H4RT5HFM?tag=glitchradar03-21"
+    },
+    {
+        "id": "rss-auto-B0BDFLN8NW",
+        "title": "Auto-Importiertes Tech-Produkt (B0BDFLN8NW)",
+        "old_price": 150.0,
+        "new_price": 50.0,
+        "discount": 67,
+        "shop": "Amazon",
+        "url": "https://www.amazon.de/dp/B0BDFLN8NW?tag=glitchradar03-21"
+    },
+    {
         "id": "amz-real-05",
         "title": "Crucial MX500 1TB 2.5 Zoll SATA SSD",
         "old_price": 85.0,
