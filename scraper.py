@@ -4,7 +4,6 @@ import urllib.parse
 import urllib.request
 
 DATA_FILE = "data/products.json"
-AFFILIATE_TAG = "glitchradar-21"  # Deine persönliche Affiliate-ID
 
 def load_products():
     if os.path.exists(DATA_FILE):
@@ -20,11 +19,28 @@ def save_products(products):
     with open(DATA_FILE, "w", encoding="utf-8") as f:
         json.dump(products, f, ensure_ascii=False, indent=4)
 
-def apply_affiliate_link(url):
+def apply_affiliate_link(url, shop_name=""):
     if not url:
         return "https://duhrrom11.github.io/glitchradar/"
+        
+    shop_lower = shop_name.lower()
     separator = "&" if "?" in url else "?"
-    return f"{url}{separator}affid={AFFILIATE_TAG}"
+    
+    # 1. Amazon PartnerNet (Deine Store-ID: glitchradar03-21)
+    if "amazon" in shop_lower:
+        if "tag=" not in url:
+            return f"{url}{separator}tag=glitchradar03-21"
+        return url
+        
+    # 2. eBay Partner Network (Deine Campaign-ID: 5339233764)
+    elif "ebay" in shop_lower:
+        if "campid=" not in url:
+            return f"{url}{separator}mkeid=1&mkcid=1&campid=5339233764&toolid=10001&customid=glitchradar"
+        return url
+        
+    # 3. Standard Netzwerke (Awin, Admitad etc.)
+    else:
+        return f"{url}{separator}affid=glitchradar-21"
 
 def send_telegram_message(chat_id, message, token):
     url = f"https://api.telegram.org/bot{token}/sendMessage"
@@ -41,7 +57,7 @@ def send_telegram_message(chat_id, message, token):
         print(f"Fehler bei {chat_id}: {e}")
 
 def run_scraper():
-    print("GlitchRadar Scraper mit Kanal-Broadcast gestartet...")
+    print("GlitchRadar Multi-Shop Scraper gestartet...")
     
     token = os.environ.get("TELEGRAM_TOKEN")
     private_chat_id = os.environ.get("TELEGRAM_CHAT_ID")
@@ -50,14 +66,14 @@ def run_scraper():
     existing_products = load_products()
     existing_ids = [p.get("id") for p in existing_products if isinstance(p, dict)]
     
-    # Frischer Test-Deal mit neuer eindeutiger ID
+    # Test-Deal mit Amazon (prüft die automatische Tag-Zuweisung)
     sample_deal = {
-        "id": "channel-test-id-08",
-        "title": "Ergonomic Mechanical Gaming Keyboard RGB (Live-Kanal-Test)",
-        "old_price": 199.00,
-        "new_price": 79.00,
-        "shop": "KeyCraft Pro",
-        "raw_url": "https://duhrrom11.github.io/glitchradar/"
+        "id": "multishop-test-01",
+        "title": "Amazon Echo Smart Speaker (Multi-Shop Test)",
+        "old_price": 99.99,
+        "new_price": 39.99,
+        "shop": "Amazon",
+        "raw_url": "https://www.amazon.de/dp/B09B8W1LZ9"
     }
 
     old_p = float(sample_deal["old_price"])
@@ -65,7 +81,8 @@ def run_scraper():
     discount_percent = int(round((1 - (new_p / old_p)) * 100))
 
     if discount_percent >= 50 and sample_deal["id"] not in existing_ids:
-        final_url = apply_affiliate_link(sample_deal["raw_url"])
+        # Hier greift nun die neue Multi-Shop Logik mit deinen echten IDs
+        final_url = apply_affiliate_link(sample_deal["raw_url"], sample_deal["shop"])
         
         processed_deal = {
             "id": sample_deal["id"],
