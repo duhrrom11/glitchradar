@@ -14,5 +14,13 @@
         "old_price": 100.0,
         "new_price": 40.0,
         "shop": "Amazon"
+    },
+    {
+        "id": "rss-auto-B0FPXHJ3C2",
+        "asin": "B0FPXHJ3C2",
+        "title": "LEGO City - Der LEGO Lieferwagen (60500) für 17,42 Euro [Amazon Prime/Joybuy Plus]",
+        "old_price": 100.0,
+        "new_price": 40.0,
+        "shop": "Amazon"
     }
 ]
