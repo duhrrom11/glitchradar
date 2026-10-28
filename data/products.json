@@ -1,5 +1,113 @@
 [
     {
+        "id": "amz-gadget-403",
+        "title": "Kabellose Qi-Ladestation 3-in-1 für Smartphone & Watch",
+        "old_price": 79.0,
+        "new_price": 29.99,
+        "discount": 62,
+        "shop": "Amazon (Gadgets)",
+        "url": "https://www.amazon.de/dp/B09DEF9012?tag=glitchradar03-21"
+    },
+    {
+        "id": "amz-gadget-402",
+        "title": "10000mAh Powerbank mit Schnellladefunktion",
+        "old_price": 49.99,
+        "new_price": 18.99,
+        "discount": 62,
+        "shop": "Amazon (Gadgets)",
+        "url": "https://www.amazon.de/dp/B08XYZ5678?tag=glitchradar03-21"
+    },
+    {
+        "id": "amz-gadget-401",
+        "title": "Smarte LED Schreibtischlampe Dimmbar & Touch",
+        "old_price": 59.99,
+        "new_price": 22.0,
+        "discount": 63,
+        "shop": "Amazon (Gadgets)",
+        "url": "https://www.amazon.de/dp/B07UVW1234?tag=glitchradar03-21"
+    },
+    {
+        "id": "amz-office-303",
+        "title": "Elektrischer Schreibtisch-Organizer mit USB-Hub",
+        "old_price": 69.99,
+        "new_price": 27.99,
+        "discount": 60,
+        "shop": "Amazon (Bürobedarf)",
+        "url": "https://www.amazon.de/dp/B09RST7890?tag=glitchradar03-21"
+    },
+    {
+        "id": "amz-office-302",
+        "title": "Höhenverstellbarer Laptop-Ständer aus Aluminium",
+        "old_price": 59.99,
+        "new_price": 22.5,
+        "discount": 62,
+        "shop": "Amazon (Bürobedarf)",
+        "url": "https://www.amazon.de/dp/B08OPQ3456?tag=glitchradar03-21"
+    },
+    {
+        "id": "amz-office-301",
+        "title": "Ergonomischer Chefsessel mit Mesh-Gewebe",
+        "old_price": 249.0,
+        "new_price": 99.0,
+        "discount": 60,
+        "shop": "Amazon (Bürobedarf)",
+        "url": "https://www.amazon.de/dp/B07LMN9012?tag=glitchradar03-21"
+    },
+    {
+        "id": "amz-game-203",
+        "title": "Profi Gaming Headset 7.1 Surround Sound",
+        "old_price": 149.0,
+        "new_price": 59.0,
+        "discount": 60,
+        "shop": "Amazon (Gaming)",
+        "url": "https://www.amazon.de/dp/B08ABC5678?tag=glitchradar03-21"
+    },
+    {
+        "id": "amz-game-202",
+        "title": "Ultra-Lightweight Ergonomische Gaming Maus",
+        "old_price": 79.99,
+        "new_price": 29.99,
+        "discount": 63,
+        "shop": "Amazon (Gaming)",
+        "url": "https://www.amazon.de/dp/B09XYZ1234?tag=glitchradar03-21"
+    },
+    {
+        "id": "amz-game-201",
+        "title": "Mechanische RGB Gaming Tastatur Red Switches",
+        "old_price": 119.99,
+        "new_price": 45.0,
+        "discount": 62,
+        "shop": "Amazon (Gaming)",
+        "url": "https://www.amazon.de/dp/B0823W9K1M?tag=glitchradar03-21"
+    },
+    {
+        "id": "amz-elec-103",
+        "title": "Tragbarer Bluetooth Outdoor Lautsprecher IPX7",
+        "old_price": 89.99,
+        "new_price": 35.0,
+        "discount": 61,
+        "shop": "Amazon (Elektronik)",
+        "url": "https://www.amazon.de/dp/B07X8V3L2P?tag=glitchradar03-21"
+    },
+    {
+        "id": "amz-elec-102",
+        "title": "True Wireless Earbuds mit Active Noise Cancelling",
+        "old_price": 129.99,
+        "new_price": 49.99,
+        "discount": 62,
+        "shop": "Amazon (Elektronik)",
+        "url": "https://www.amazon.de/dp/B08C1W5N81?tag=glitchradar03-21"
+    },
+    {
+        "id": "amz-elec-101",
+        "title": "High-End Over-Ear ANC Bluetooth Kopfhörer",
+        "old_price": 199.99,
+        "new_price": 79.99,
+        "discount": 60,
+        "shop": "Amazon (Elektronik)",
+        "url": "https://www.amazon.de/dp/B09B8W1LZ9?tag=glitchradar03-21"
+    },
+    {
         "id": "multishop-test-01",
         "title": "Amazon Echo Smart Speaker (Multi-Shop Test)",
         "old_price": 99.99,
