@@ -1,5 +1,14 @@
 [
     {
+        "id": "multishop-test-01",
+        "title": "Amazon Echo Smart Speaker (Multi-Shop Test)",
+        "old_price": 99.99,
+        "new_price": 39.99,
+        "discount": 60,
+        "shop": "Amazon",
+        "url": "https://www.amazon.de/dp/B09B8W1LZ9?tag=glitchradar03-21"
+    },
+    {
         "id": "channel-test-id-08",
         "title": "Ergonomic Mechanical Gaming Keyboard RGB (Live-Kanal-Test)",
         "old_price": 199.0,
