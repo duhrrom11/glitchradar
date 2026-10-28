@@ -7,53 +7,65 @@ import os
 ASINS_FILE = "data/asins.json"
 
 TECH_RSS_FEEDS = [
-    "https://www.techstage.de/rss.xml",          # Fokus auf Technik, Gadgets und Tests
-    "https://winfuture.de/news.rss",             # Starke Tech-News, Hardware und Software
-    "https://www.chip.de/rss/rss_chip_alle.xml", # Große Tech-Redaktion mit vielen Produktempfehlungen
-    "https://www.giga.de/feed/",                 # Tech, Gaming, Smartphones und Gadgets
-    "https://www.mydealz.de/rss/deals"           # Das größte deutsche Deal-Portal (extrem hoher Anteil an Amazon-Deals!)
+    "https://www.techstage.de/rss.xml",
+    "https://winfuture.de/news.rss",
+    "https://www.chip.de/rss/rss_chip_alle.xml",
+    "https://www.giga.de/feed/",
+    "https://www.mydealz.de/rss/deals"
 ]
 
-
 def parse_rss_feed(feed_url):
+    """
+    Durchsucht den RSS-Feed nach Beiträgen und extrahiert den Artikel-Titel sowie den Textinhalt.
+    """
+    items_data = []
     try:
         req = urllib.request.Request(feed_url, headers={'User-Agent': 'Mozilla/5.0'})
         with urllib.request.urlopen(req, timeout=10) as response:
             xml_data = response.read()
             root = ET.fromstring(xml_data)
-            content_blob = ""
+            
             for item in root.findall('.//item'):
-                title = item.find('title')
-                description = item.find('description')
-                link = item.find('link')
-                if title is not None and title.text:
-                    content_blob += " " + title.text
-                if description is not None and description.text:
-                    content_blob += " " + description.text
-                if link is not None and link.text:
-                    content_blob += " " + link.text
-            return content_blob
+                title_elem = item.find('title')
+                desc_elem = item.find('description')
+                link_elem = item.find('link')
+                
+                item_title = title_elem.text if title_elem is not None and title_elem.text else "Tech-Deal"
+                
+                # Text-Blob zusammenbauen, um darin nach ASINs zu suchen
+                text_blob = item_title
+                if desc_elem is not None and desc_elem.text:
+                    text_blob += " " + desc_elem.text
+                if link_elem is not None and link_elem.text:
+                    text_blob += " " + link_elem.text
+                    
+                items_data.append((item_title, text_blob))
+            return items_data
     except Exception as e:
         print(f"Fehler beim Abrufen des Feeds {feed_url}: {e}")
-        return ""
+        return []
 
 def collect_and_update_asins():
-    print("Starte automatische ASIN-Ernte aus RSS-Feeds...")
-    all_text_data = ""
-    for feed_url in TECH_RSS_FEEDS:
-        all_text_data += " " + parse_rss_feed(feed_url)
-
-    if not all_text_data.strip():
-        print("Keine Feed-Daten erhalten.")
-        return
-
-    pattern = r'/(?:dp|gp/product)/([A-Z0-9]{10})'
-    found_asins = set(re.findall(pattern, all_text_data))
+    print("Starte intelligente ASIN-Ernte mit echten RSS-Titeln...")
     
-    if not found_asins:
-        print("Keine neuen ASINs gefunden.")
+    asin_to_title = {}
+    pattern = r'/(?:dp|gp/product)/([A-Z0-9]{10})'
+
+    for feed_url in TECH_RSS_FEEDS:
+        print(f"Scanne Feed: {feed_url}")
+        feed_items = parse_rss_feed(feed_url)
+        for item_title, text_blob in feed_items:
+            found_asins = re.findall(pattern, text_blob)
+            for asin in found_asins:
+                # Verknüpfe die ASIN direkt mit der echten Überschrift des Beitrags
+                if asin not in asin_to_title:
+                    asin_to_title[asin] = item_title.strip()
+
+    if not asin_to_title:
+        print("Keine neuen ASINs in den Feeds gefunden.")
         return
 
+    # Bestehende asins.json laden
     existing_data = []
     if os.path.exists(ASINS_FILE):
         try:
@@ -65,14 +77,14 @@ def collect_and_update_asins():
     existing_asins = {item.get("asin") for item in existing_data if "asin" in item}
     
     added_count = 0
-    for asin in found_asins:
+    for asin, title in asin_to_title.items():
         if asin not in existing_asins:
             new_entry = {
                 "id": f"rss-auto-{asin}",
                 "asin": asin,
-                "title": f"Auto-Importiertes Tech-Produkt ({asin})",
-                "old_price": 150.00,
-                "new_price": 50.00,
+                "title": title,  # <--- Hier landet jetzt die echte Überschrift aus dem Feed!
+                "old_price": 100.00,  # Platzhalter für den ersten Check
+                "new_price": 40.00,   # Test-Basis für den Rabatt-Filter
                 "shop": "Amazon"
             }
             existing_data.append(new_entry)
@@ -83,7 +95,7 @@ def collect_and_update_asins():
     with open(ASINS_FILE, "w", encoding="utf-8") as f:
         json.dump(existing_data, f, ensure_ascii=False, indent=4)
         
-    print(f"{added_count} neue ASINs zur asins.json hinzugefügt.")
+    print(f"Erfolg! {added_count} neue ASINs mit echten Titeln zur asins.json hinzugefügt.")
 
 if __name__ == "__main__":
     collect_and_update_asins()
