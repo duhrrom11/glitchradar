@@ -1,36 +1,38 @@
-name: GlitchRadar Hourly Scraper
+name: GlitchRadar Automated Scraper & Collector
 
 on:
   schedule:
-    - cron: '0 * * * *'
-  workflow_dispatch:
+    - cron: '0 * * * *'  # Stündlicher Lauf zur vollen Stunde
+  workflow_dispatch:      # Manueller Start über den GitHub Actions Tab
 
 permissions:
-  contents: write
+  contents: write        # Erlaubt dem Bot das Speichern der JSON-Dateien
 
 jobs:
   run-scraper:
     runs-on: ubuntu-latest
     steps:
-      - name: Repository auschecken
-        uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v3
 
-      - name: Python einrichten
-        uses: actions/setup-python@v5
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
           python-version: '3.10'
 
-      - name: Scraper ausführen
+      - name: Run ASIN Collector (RSS Auto-Discovery)
+        run: python collector.py
+
+      - name: Run Main Scraper & Price Checker
+        run: python scraper.py
         env:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
-        run: python scraper.py
 
-      - name: Änderungen speichern (Git Commit & Push)
+      - name: Commit and Push Results
         run: |
           git config --global user.name "GlitchRadar Bot"
-          git config --global user.email "bot@glitchradar.local"
-          git add data/products.json
-          git diff --staged --quiet || git commit -m "Auto: Update product anomalies [skip ci]"
-          git push
+          git config --global user.email "bot@users.noreply.github.com"
+          git add data/asins.json data/products.json
+          git diff --quiet && git diff --staged --quiet || (git commit -m "🤖 Auto-update deals and ASINs [skip ci]" && git push)
