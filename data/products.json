@@ -1,5 +1,50 @@
 [
     {
+        "id": "amz-real-05",
+        "title": "Crucial MX500 1TB 2.5 Zoll SATA SSD",
+        "old_price": 85.0,
+        "new_price": 39.0,
+        "discount": 54,
+        "shop": "Amazon",
+        "url": "https://www.amazon.de/dp/B078211KBB?tag=glitchradar03-21"
+    },
+    {
+        "id": "amz-real-04",
+        "title": "Anker Nano II 65W USB-C Schnellladegerät",
+        "old_price": 45.99,
+        "new_price": 22.0,
+        "discount": 52,
+        "shop": "Amazon",
+        "url": "https://www.amazon.de/dp/B099F4V2KL?tag=glitchradar03-21"
+    },
+    {
+        "id": "amz-real-03",
+        "title": "HyperX Cloud II Gaming Headset",
+        "old_price": 99.99,
+        "new_price": 44.99,
+        "discount": 55,
+        "shop": "Amazon",
+        "url": "https://www.amazon.de/dp/B00SAYCVCO?tag=glitchradar03-21"
+    },
+    {
+        "id": "amz-real-02",
+        "title": "Samsung 980 PRO NVMe M.2 SSD 1TB",
+        "old_price": 149.0,
+        "new_price": 69.0,
+        "discount": 54,
+        "shop": "Amazon",
+        "url": "https://www.amazon.de/dp/B08GS7748F?tag=glitchradar03-21"
+    },
+    {
+        "id": "amz-real-01",
+        "title": "Logitech G502 HERO High Performance Gaming-Maus",
+        "old_price": 89.99,
+        "new_price": 39.99,
+        "discount": 56,
+        "shop": "Amazon",
+        "url": "https://www.amazon.de/dp/B07WJ6JKDJ?tag=glitchradar03-21"
+    },
+    {
         "id": "amz-gadget-403",
         "title": "Kabellose Qi-Ladestation 3-in-1 für Smartphone & Watch",
         "old_price": 79.0,
