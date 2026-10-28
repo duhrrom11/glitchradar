@@ -7,8 +7,13 @@ import os
 ASINS_FILE = "data/asins.json"
 
 TECH_RSS_FEEDS = [
-    # Hier kannst du öffentliche RSS-Feeds von Tech-Seiten eintragen
+    "https://www.techstage.de/rss.xml",          # Fokus auf Technik, Gadgets und Tests
+    "https://winfuture.de/news.rss",             # Starke Tech-News, Hardware und Software
+    "https://www.chip.de/rss/rss_chip_alle.xml", # Große Tech-Redaktion mit vielen Produktempfehlungen
+    "https://www.giga.de/feed/",                 # Tech, Gaming, Smartphones und Gadgets
+    "https://www.mydealz.de/rss/deals"           # Das größte deutsche Deal-Portal (extrem hoher Anteil an Amazon-Deals!)
 ]
+
 
 def parse_rss_feed(feed_url):
     try:
