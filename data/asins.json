@@ -38,5 +38,29 @@
         "old_price": 100.0,
         "new_price": 40.0,
         "shop": "Amazon"
+    },
+    {
+        "id": "rss-auto-B079VXVMPN",
+        "asin": "B079VXVMPN",
+        "title": "[Spar-Abo] 3für2 Aktion: Jacobs/Melitta Kaffeebohnen, z.B. Jacobs Barista Crema, 3x1kg für 10,79€/kg (8,99€/kg im 5er-Abo, 8,25€/kg möglich)",
+        "old_price": 100.0,
+        "new_price": 40.0,
+        "shop": "Amazon"
+    },
+    {
+        "id": "rss-auto-B07PKKXDQ2",
+        "asin": "B07PKKXDQ2",
+        "title": "[Spar-Abo] 3für2 Aktion: Jacobs/Melitta Kaffeebohnen, z.B. Jacobs Barista Crema, 3x1kg für 10,79€/kg (8,99€/kg im 5er-Abo, 8,25€/kg möglich)",
+        "old_price": 100.0,
+        "new_price": 40.0,
+        "shop": "Amazon"
+    },
+    {
+        "id": "rss-auto-B000FIVV2S",
+        "asin": "B000FIVV2S",
+        "title": "[Spar-Abo] 3für2 Aktion: Jacobs/Melitta Kaffeebohnen, z.B. Jacobs Barista Crema, 3x1kg für 10,79€/kg (8,99€/kg im 5er-Abo, 8,25€/kg möglich)",
+        "old_price": 100.0,
+        "new_price": 40.0,
+        "shop": "Amazon"
     }
 ]
