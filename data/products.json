@@ -1,5 +1,23 @@
 [
     {
+        "id": "rss-auto-B0D4ML3J9D",
+        "title": "[Prime Spar-Abo] 4für3 Aktion: 4x6L Oatly Barista Haferdrink/Hafermilch für 1,65€/L (1,40€/L im 5er-Abo)",
+        "old_price": 100.0,
+        "new_price": 40.0,
+        "discount": 60,
+        "shop": "Amazon",
+        "url": "https://www.amazon.de/dp/B0D4ML3J9D?tag=glitchradar03-21"
+    },
+    {
+        "id": "rss-auto-B0CJK658DF",
+        "title": "[Prime Spar-Abo] 4für3 Aktion: 4x6L Oatly Barista Haferdrink/Hafermilch für 1,65€/L (1,40€/L im 5er-Abo)",
+        "old_price": 100.0,
+        "new_price": 40.0,
+        "discount": 60,
+        "shop": "Amazon",
+        "url": "https://www.amazon.de/dp/B0CJK658DF?tag=glitchradar03-21"
+    },
+    {
         "id": "rss-auto-B000FIVV2S",
         "title": "[Spar-Abo] 3für2 Aktion: Jacobs/Melitta Kaffeebohnen, z.B. Jacobs Barista Crema, 3x1kg für 10,79€/kg (8,99€/kg im 5er-Abo, 8,25€/kg möglich)",
         "old_price": 100.0,

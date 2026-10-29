@@ -62,5 +62,21 @@
         "old_price": 100.0,
         "new_price": 40.0,
         "shop": "Amazon"
+    },
+    {
+        "id": "rss-auto-B0CJK658DF",
+        "asin": "B0CJK658DF",
+        "title": "[Prime Spar-Abo] 4für3 Aktion: 4x6L Oatly Barista Haferdrink/Hafermilch für 1,65€/L (1,40€/L im 5er-Abo)",
+        "old_price": 100.0,
+        "new_price": 40.0,
+        "shop": "Amazon"
+    },
+    {
+        "id": "rss-auto-B0D4ML3J9D",
+        "asin": "B0D4ML3J9D",
+        "title": "[Prime Spar-Abo] 4für3 Aktion: 4x6L Oatly Barista Haferdrink/Hafermilch für 1,65€/L (1,40€/L im 5er-Abo)",
+        "old_price": 100.0,
+        "new_price": 40.0,
+        "shop": "Amazon"
     }
 ]
