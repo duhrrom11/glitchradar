@@ -1,17 +1,15 @@
 import base64
-import csv
-import io
 import json
 import os
 import urllib.parse
 import urllib.request
 
 DATA_FILE = "data/products.json"
-USERS_FILE = "data/users.json"
 
-# Deine Affiliate-IDs & Parameter
-EBAY_CAMP_ID = "5339233764"       # eBay Partner Network Campaign-ID
-AWIN_AFF_ID = "glitchradar-21"    # Awin Standard Affiliate-ID
+# Deine persönlichen Affiliate-IDs
+AMAZON_TAG = "glitchradar03-21"       # Amazon PartnerNet Store-ID
+EBAY_CAMP_ID = "5339233764"           # eBay Partner Network Campaign-ID
+AWIN_AFF_ID = "glitchradar-21"        # Awin Standard Affiliate-ID
 
 def load_json(filepath):
     if os.path.exists(filepath):
@@ -58,7 +56,8 @@ def get_ebay_oauth_token(client_id, client_secret):
 
 def fetch_ebay_api_deals():
     """
-    Fragt echte Produktdaten über die offizielle eBay Browse API ab.
+    Fragt echte Produktdaten über die offizielle eBay Browse API ab 
+    mit einem umfassenden XXL-Tech-Suchfilter.
     """
     client_id = os.environ.get("EBAY_CLIENT_ID")
     client_secret = os.environ.get("EBAY_CLIENT_SECRET")
@@ -73,8 +72,38 @@ def fetch_ebay_api_deals():
     if not token:
         return deals
         
-    print("Verbinde mit eBay Browse API...")
-    keywords = ["grafikkarte", "gaming laptop", "smartphone", "oled monitor", "konsole"]
+    print("Verbinde mit eBay Browse API für den Massen-Tech-Scan...")
+    
+    # XXL Tech-Suchbegriffe für maximale Abdeckung im gesamten Elektronik- und Gaming-Sektor
+    keywords = [
+        # Smartphones, Tablets & Wearables
+        "smartphone", "handy", "iphone", "samsung galaxy", "xiaomi", "google pixel", "oneplus", 
+        "ipad", "tablet", "smartwatch", "apple watch", "garmin", "fitbit", "powerbank", "magsafe",
+        
+        # PC-Komponenten & Hardware
+        "grafikkarte", "rtx", "gtx", "radeon", "cpu", "prozessor", "intel core", "amd ryzen", 
+        "mainboard", "ddr4 ram", "ddr5 ram", "nvme ssd", "m.2 ssd", "pc netzteil", "gehäuse", "wasserkühlung",
+        
+        # Laptops, Monitore & Peripherie
+        "gaming laptop", "notebook", "macbook", "chromebook", "oled monitor", "gaming monitor", 
+        "4k monitor", "ultrawide monitor", "tastatur", "mechanische tastatur", "gaming maus", "headset", "streaming mikrofon",
+        
+        # Konsolen, Gaming & VR
+        "playstation 5", "ps5", "xbox series x", "nintendo switch", "steam deck", "rog ally", 
+        "legion go", "vr headset", "meta quest", "psvr2", "gaming stuhl", "controller", "racing wheel",
+        
+        # Audio, TV & Heimkino
+        "oled fernseher", "qled tv", "smart tv", "soundbar", "bluetooth box", "jbl box", 
+        "bose kopfhörer", "airpods", "in-ear kopfhörer", "over-ear kopfhörer", "sonos", "beamer", "heimkino",
+        
+        # Smart Home & Netzwerk
+        "fritzbox", "wlan router", "mesh wlan", "repeater", "philips hue", "smart plug", 
+        "überwachungskamera", "ip kamera", "smart lock", "saugroboter", "mähroboter",
+        
+        # Gadgets & Creator Tech
+        "drohne", "dji drone", "gopro", "actioncam", "3d drucker", "grafiktablett", 
+        "e-reader", "kindle", "nas server", "externe festplatte", "usb stick"
+    ]
     
     for kw in keywords:
         try:
@@ -111,26 +140,38 @@ def fetch_ebay_api_deals():
                                 "old_price": old_p,
                                 "new_price": new_p,
                                 "shop": "eBay",
-                                "category": "Elektronik",
+                                "category": "Elektronik & Tech",
                                 "url": item_web_url
                             })
         except Exception as e:
             print(f"Fehler bei eBay API Abfrage für '{kw}': {e}")
             
-    print(f"{len(deals)} Artikel von der eBay API abgerufen.")
+    print(f"{len(deals)} Tech-Artikel von der eBay API abgerufen.")
     return deals
 
 def apply_affiliate_link(url, shop_name=""):
+    """
+    Erkennt den Shop automatisch und fügt die korrekten Tracking-Parameter an.
+    """
     if not url:
         return "https://duhrrom11.github.io/glitchradar/"
         
     shop_lower = shop_name.lower()
     separator = "&" if "?" in url else "?"
     
-    if "ebay" in shop_lower:
+    # 1. Amazon PartnerNet
+    if "amazon" in shop_lower:
+        if "tag=" not in url:
+            return f"{url}{separator}tag={AMAZON_TAG}"
+        return url
+        
+    # 2. eBay Partner Network (ePN)
+    elif "ebay" in shop_lower:
         if "campid=" not in url:
             return f"{url}{separator}mkeid=1&mkcid=1&campid={EBAY_CAMP_ID}&toolid=10001&customid=glitchradar"
         return url
+        
+    # 3. Awin / Standard Netzwerke
     else:
         if "affid=" not in url:
             return f"{url}{separator}affid={AWIN_AFF_ID}"
@@ -148,7 +189,7 @@ def send_telegram_message(chat_id, message, token):
         print(f"Telegram Fehler bei {chat_id}: {e}")
 
 def run_scraper():
-    print("GlitchRadar eBay API Scraper gestartet...")
+    print("GlitchRadar Master Tech-Scraper gestartet...")
     
     token = os.environ.get("TELEGRAM_TOKEN")
     private_chat_id = os.environ.get("TELEGRAM_CHAT_ID")
@@ -159,7 +200,7 @@ def run_scraper():
     
     all_incoming_deals = []
 
-    # eBay API Produkte abrufen
+    # eBay API Tech-Produkte abrufen
     ebay_items = fetch_ebay_api_deals()
     all_incoming_deals.extend(ebay_items)
 
@@ -168,7 +209,7 @@ def run_scraper():
         return
 
     new_items_added = 0
-    print(f"Prüfe {len(all_incoming_deals)} Produkte auf Preisfehler...")
+    print(f"Prüfe {len(all_incoming_deals)} Produkte auf Preisfehler (>= 50%)...")
 
     for sample_deal in all_incoming_deals:
         product_id = sample_deal.get("id")
@@ -200,7 +241,7 @@ def run_scraper():
                 "new_price": new_p,
                 "discount": discount_percent,
                 "shop": shop_name,
-                "category": sample_deal.get("category", "Elektronik"),
+                "category": sample_deal.get("category", "Elektronik & Tech"),
                 "url": final_url
             }
             
@@ -225,11 +266,8 @@ def run_scraper():
                     send_telegram_message(channel_id, message, token)
 
     if new_items_added > 0:
-        dir_name = os.path.dirname(DATA_FILE)
-        if dir_name:
-            os.makedirs(dir_name, exist_ok=True)
         save_json(DATA_FILE, existing_products)
-        print(f"{new_items_added} neue Deals gespeichert und publiziert.")
+        print(f"{new_items_added} neue Deals erfolgreich gespeichert und publiziert.")
     else:
         print("Scraper beendet: Keine neuen Deals >= 50% gefunden.")
 
