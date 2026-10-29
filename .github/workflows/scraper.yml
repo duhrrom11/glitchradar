@@ -1,9 +1,9 @@
-name: GlitchRadar Automated Scraper & Collector
+name: GlitchRadar Automated Scraper
 
 on:
   schedule:
-    - cron: '0 * * * *'  # Stündlicher Lauf zur vollen Stunde
-  workflow_dispatch:      # Manueller Start über den GitHub Actions Tab
+    - cron: '0 * * * *'  # Läuft stündlich zur vollen Stunde
+  workflow_dispatch:      # Ermöglicht den manuellen Start über den GitHub Actions Tab
 
 permissions:
   contents: write        # Erlaubt dem Bot das Speichern der JSON-Dateien
@@ -20,10 +20,7 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Run ASIN Collector (RSS Auto-Discovery)
-        run: python collector.py
-
-            - name: Run Main Scraper & Price Checker
+      - name: Run Main Scraper & Price Checker
         run: python scraper.py
         env:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
@@ -35,5 +32,6 @@ jobs:
         run: |
           git config --global user.name "GlitchRadar Bot"
           git config --global user.email "bot@users.noreply.github.com"
-          git add data/asins.json data/products.json
-          git diff --quiet && git diff --staged --quiet || (git commit -m "🤖 Auto-update deals and ASINs [skip ci]" && git push)
+          git add data/products.json data/asins.json data/users.json
+          git diff --quiet && git diff --staged --quiet || (git commit -m "🤖 Auto-update deals and data [skip ci]" && git push)
+          
