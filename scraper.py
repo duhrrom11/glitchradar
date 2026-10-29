@@ -21,7 +21,9 @@ def load_json(filepath):
     return []
 
 def save_json(filepath, data):
-    os.makedirs(os.path.dirname(filepath), exist_ok=True)
+    dir_name = os.path.dirname(filepath)
+    if dir_name:
+        os.makedirs(dir_name, exist_ok=True)
     with open(filepath, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=4)
 
@@ -57,15 +59,60 @@ def send_telegram_message(chat_id, message, token):
 
 def fetch_ebay_api_deals(api_token):
     """
-    Holt Produktdaten über die eBay API und bindet die ePN Campaign-ID ein.
+    Fragt echte Produktdaten über die offizielle eBay Browse API ab 
+    und filtert Artikel mit reduzierten Preisen heraus.
     """
     deals = []
     if not api_token:
         print("Kein eBay API Token in den Secrets hinterlegt.")
         return deals
         
-    # Hier greift der API-Abruf mit deinem Token zu
-    print("Verbinde mit eBay API...")
+    print("Verbinde mit eBay Browse API...")
+    
+    # Suchbegriffe für den automatisierten Scan auf eBay DE
+    keywords = ["grafikkarte", "gaming laptop", "smartphone", "oled monitor", "konsole"]
+    
+    for kw in keywords:
+        try:
+            encoded_kw = urllib.parse.quote(kw)
+            url = f"https://api.ebay.com/buy/browse/v1/item_summary/search?q={encoded_kw}&limit=10"
+            
+            req = urllib.request.Request(url, headers={
+                'Authorization': f'Bearer {api_token}',
+                'X-EBAY-C-MARKETPLACE-ID': 'EBAY_DE',
+                'User-Agent': 'Mozilla/5.0'
+            })
+            
+            with urllib.request.urlopen(req, timeout=15) as response:
+                data = json.loads(response.read().decode('utf-8'))
+                items = data.get('itemSummaries', [])
+                
+                for item in items:
+                    title = item.get('title')
+                    item_id = item.get('itemId')
+                    item_web_url = item.get('itemWebUrl')
+                    
+                    price_info = item.get('price', {})
+                    current_price = float(price_info.get('value', 0))
+                    
+                    orig_price_info = item.get('originalPrice', {})
+                    if orig_price_info:
+                        old_p = float(orig_price_info.get('value', 0))
+                        new_p = current_price
+                        
+                        if old_p > 0 and new_p < old_p:
+                            deals.append({
+                                "id": f"ebay-{item_id}",
+                                "title": title,
+                                "old_price": old_p,
+                                "new_price": new_p,
+                                "shop": "eBay",
+                                "url": item_web_url
+                            })
+        except Exception as e:
+            print(f"Fehler bei eBay API Abfrage für '{kw}': {e}")
+            
+    print(f"{len(deals)} Artikel von der eBay API abgerufen.")
     return deals
 
 def fetch_live_feed(feed_url, shop_name):
@@ -110,7 +157,7 @@ def run_scraper():
     ebay_items = fetch_ebay_api_deals(ebay_api_token)
     all_incoming_deals.extend(ebay_items)
 
-    # 2. Awin Live-Feeds einlesen (sobald URLs vorliegen, hier eintragen)
+    # 2. Awin Live-Feeds einlesen
     live_feed_sources = [
         # {"url": "HIER_AWIN_FEED_URL_EINTRAGEN", "shop": "Alternate"}
     ]
@@ -142,7 +189,7 @@ def run_scraper():
 
         discount_percent = int(round((1 - (new_p / old_p)) * 100))
 
-        # Filter: Nur Preisanomalien ab 50% Rabatt[span_3](start_span)[span_3](end_span)
+        # Filter: Nur Preisanomalien ab 50% Rabatt
         if discount_percent >= 50:
             shop_name = sample_deal.get("shop", "eBay")
             raw_url = sample_deal.get("url")
