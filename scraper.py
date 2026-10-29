@@ -228,7 +228,7 @@ def run_scraper():
         discount_percent = int(round((1 - (new_p / old_p)) * 100))
 
         # Filter: Nur Preisanomalien ab 50% Rabatt
-        if discount_percent >= 50:
+        if discount_percent >= 10:
             shop_name = sample_deal.get("shop", "eBay")
             raw_url = sample_deal.get("url")
             
