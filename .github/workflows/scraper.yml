@@ -23,12 +23,13 @@ jobs:
       - name: Run ASIN Collector (RSS Auto-Discovery)
         run: python collector.py
 
-      - name: Run Main Scraper & Price Checker
+            - name: Run Main Scraper & Price Checker
         run: python scraper.py
         env:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
+          EBAY_API_TOKEN: ${{ secrets.EBAY_API_TOKEN }}
 
       - name: Commit and Push Results
         run: |
