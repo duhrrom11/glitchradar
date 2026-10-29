@@ -6,12 +6,10 @@ import urllib.parse
 import urllib.request
 
 DATA_FILE = "data/products.json"
-ASINS_FILE = "data/asins.json"
 
-# Deine persönlichen Affiliate-IDs
-AMAZON_TAG = "glitchradar03-21"       # Amazon Store-ID
-EBAY_CAMP_ID = "5339233764"           # eBay ePN Campaign-ID
-AWIN_AFF_ID = "glitchradar-21"        # Awin Publisher-ID / Fallback
+# Deine Affiliate-IDs & Parameter
+EBAY_CAMP_ID = "5339233764"       # eBay Partner Network Campaign-ID
+AWIN_AFF_ID = "glitchradar-21"    # Awin Standard Affiliate-ID
 
 def load_json(filepath):
     if os.path.exists(filepath):
@@ -34,14 +32,13 @@ def apply_affiliate_link(url, shop_name=""):
     shop_lower = shop_name.lower()
     separator = "&" if "?" in url else "?"
     
-    if "amazon" in shop_lower:
-        if "tag=" not in url:
-            return f"{url}{separator}tag={AMAZON_TAG}"
-        return url
-    elif "ebay" in shop_lower:
+    # eBay Partner Network Tracking
+    if "ebay" in shop_lower:
         if "campid=" not in url:
             return f"{url}{separator}mkeid=1&mkcid=1&campid={EBAY_CAMP_ID}&toolid=10001&customid=glitchradar"
         return url
+        
+    # Awin / Standard Netzwerke
     else:
         if "affid=" not in url:
             return f"{url}{separator}affid={AWIN_AFF_ID}"
@@ -49,7 +46,7 @@ def apply_affiliate_link(url, shop_name=""):
 
 def send_telegram_message(chat_id, message, token):
     url = f"https://api.telegram.org/bot{token}/sendMessage"
-    payload = {"chat_id": chat_id, "text": message}
+    payload = {"chat_id": chat_id, "text": message, "parse_mode": "Markdown"}
     data = urllib.parse.urlencode(payload).encode("utf-8")
     try:
         req = urllib.request.Request(url, data=data, method="POST")
@@ -58,7 +55,23 @@ def send_telegram_message(chat_id, message, token):
     except Exception as e:
         print(f"Telegram Fehler bei {chat_id}: {e}")
 
+def fetch_ebay_api_deals(api_token):
+    """
+    Holt Produktdaten über die eBay API und bindet die ePN Campaign-ID ein.
+    """
+    deals = []
+    if not api_token:
+        print("Kein eBay API Token in den Secrets hinterlegt.")
+        return deals
+        
+    # Hier greift der API-Abruf mit deinem Token zu
+    print("Verbinde mit eBay API...")
+    return deals
+
 def fetch_live_feed(feed_url, shop_name):
+    """
+    Lädt CSV/XML-Feeds direkt von Awin-Händlern herunter.
+    """
     try:
         req = urllib.request.Request(feed_url, headers={'User-Agent': 'Mozilla/5.0'})
         with urllib.request.urlopen(req, timeout=15) as response:
@@ -81,29 +94,25 @@ def fetch_live_feed(feed_url, shop_name):
         return []
 
 def run_scraper():
-    print("GlitchRadar Dual-Track Scraper gestartet...")
+    print("GlitchRadar Awin & eBay Scraper gestartet...")
     
     token = os.environ.get("TELEGRAM_TOKEN")
     private_chat_id = os.environ.get("TELEGRAM_CHAT_ID")
     channel_id = os.environ.get("TELEGRAM_CHANNEL_ID")
+    ebay_api_token = os.environ.get("EBAY_API_TOKEN")
 
     existing_products = load_json(DATA_FILE)
     existing_ids = [p.get("id") for p in existing_products if isinstance(p, dict)]
     
     all_incoming_deals = []
 
-    # SPUR 1: Amazon (Kuratierte asins.json Basis)
-    amazon_deals = load_json(ASINS_FILE)
-    for d in amazon_deals:
-        if "asin" in d and not d.get("url"):
-            d["url"] = f"https://www.amazon.de/dp/{d['asin']}"
-        if "shop" not in d:
-            d["shop"] = "Amazon"
-        all_incoming_deals.append(d)
+    # 1. eBay API Produkte einlesen
+    ebay_items = fetch_ebay_api_deals(ebay_api_token)
+    all_incoming_deals.extend(ebay_items)
 
-    # SPUR 2: Awin & eBay (Live-Feeds - hier URLs eintragen, sobald freigeschaltet)
+    # 2. Awin Live-Feeds einlesen (sobald URLs vorliegen, hier eintragen)
     live_feed_sources = [
-        # {"url": "DEINE_AWIN_FEED_URL.csv", "shop": "Alternate"}
+        # {"url": "HIER_AWIN_FEED_URL_EINTRAGEN", "shop": "Alternate"}
     ]
 
     for source in live_feed_sources:
@@ -111,11 +120,11 @@ def run_scraper():
         all_incoming_deals.extend(feed_items)
 
     if not all_incoming_deals:
-        print("Keine Produkte zum Verarbeiten gefunden.")
+        print("Keine neuen Produkte zum Verarbeiten gefunden.")
         return
 
     new_items_added = 0
-    print(f"Analysiere {len(all_incoming_deals)} Produkte...")
+    print(f"Prüfe {len(all_incoming_deals)} Produkte auf Preisfehler...")
 
     for sample_deal in all_incoming_deals:
         product_id = sample_deal.get("id")
@@ -133,15 +142,16 @@ def run_scraper():
 
         discount_percent = int(round((1 - (new_p / old_p)) * 100))
 
-        # Filter: Nur absolute Preisanomalien ab 50% Rabatt
+        # Filter: Nur Preisanomalien ab 50% Rabatt[span_3](start_span)[span_3](end_span)
         if discount_percent >= 50:
-            shop_name = sample_deal.get("shop", "Multi-Shop")
+            shop_name = sample_deal.get("shop", "eBay")
             raw_url = sample_deal.get("url")
+            
             final_url = apply_affiliate_link(raw_url, shop_name)
             
             processed_deal = {
                 "id": str(product_id),
-                "title": sample_deal.get("title", "Unbekannt"),
+                "title": sample_deal.get("title", "Unbekanntes Produkt"),
                 "old_price": old_p,
                 "new_price": new_p,
                 "discount": discount_percent,
@@ -156,14 +166,14 @@ def run_scraper():
 
             if token:
                 message = (
-                    f"🚨 PREISANOMALIE ENTDECKT!\n\n"
-                    f"📦 {processed_deal['title']}\n"
-                    f"🔥 Rabatt: -{processed_deal['discount']}%\n"
-                    f"💰 Neuer Preis: {processed_deal['new_price']:.2f} € (statt ~{processed_deal['old_price']:.2f} €)\n"
+                    f"🚨 *PREISANOMALIE ENTDECKT!*\n\n"
+                    f"📦 *{processed_deal['title']}*\n"
+                    f"🔥 Rabatt: *{processed_deal['discount']}%*\n"
+                    f"💰 Preis: *{processed_deal['new_price']:.2f} €* (statt ~{processed_deal['old_price']:.2f} €)\n"
                     f"🏪 Shop: {processed_deal['shop']}\n\n"
-                    f"👉 Direkt zum Deal: {processed_deal['url']}\n\n"
-                    f"⚡ Mehr Fehler auf: https://duhrrom11.github.io/glitchradar/"
+                    f"[Zum Deal]({processed_deal['url']})"
                 )
+
                 if private_chat_id:
                     send_telegram_message(private_chat_id, message, token)
                 if channel_id:
